@@ -31,17 +31,23 @@ router.post('/', upload.single('myFile'), (req, res, next) => {
 				event = {entries: []}
 				event.entries.push(obj)
 				fileName = moment(obj.date + ' ' + obj.time, 'DD/MM/YY hh:mm:ss.SSS').format('YYYYMMDDhhmm') 
-				event.startDateTime = moment(obj.date + ' ' + obj.time, 'DD/MM/YY hh:mm:ss.SSS').format('YYYYMMDDhhmm') 
-				event.startingLatitude = obj.latitude
-				event.startingLongitude = obj.longitude
+				event.startDateTime = moment(obj.date + ' ' + obj.time, 'DD/MM/YY hh:mm:ss.SSS').format('YYYY/MM/DD hh:mm:ss.SSS') 
+				event.startLatitude = obj.latitude
+				event.startLongitude = obj.longitude
 				event.startDate = obj.date
 				event.startTime = obj.time
+				event.startSpeed = obj.speed
+				event.startZone = obj.zone
 			}
 			if(obj.zone > 0 && last.zone > 0){
 				event.entries.push(obj)
 			}
 			if(obj.zone === 0 && last.zone > 0){
-				event.endDateTime = moment(obj.date + ' ' + obj.time, 'DD/MM/YY hh:mm:ss.SSS').format('YYYYMMDDhhmm') 
+				event.endLatitude = obj.latitude
+				event.endLongitude = obj.longitude
+				event.endDateTime = moment(obj.date + ' ' + obj.time, 'DD/MM/YY hh:mm:ss.SSS').format('YYYY/MM/DD hh:mm:ss.SSS')
+				event.endSpeed = obj.speed
+				event.endZone = obj.zone
 				events.push(event)
 			}
 			last = obj
