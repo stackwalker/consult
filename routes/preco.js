@@ -43,11 +43,11 @@ router.post('/', upload.single('myFile'), (req, res, next) => {
 				event.entries.push(obj)
 			}
 			if(obj.zone === 0 && last.zone > 0){
-				event.endLatitude = obj.latitude
-				event.endLongitude = obj.longitude
-				event.endDateTime = moment(obj.date + ' ' + obj.time, 'DD/MM/YY hh:mm:ss.SSS').format('YYYY/MM/DD hh:mm:ss.SSS')
-				event.endSpeed = obj.speed
-				event.endZone = obj.zone
+				event.endLatitude = last.latitude
+				event.endLongitude = last.longitude
+				event.endDateTime = moment(last.date + ' ' + last.time, 'DD/MM/YY hh:mm:ss.SSS').format('YYYY/MM/DD hh:mm:ss.SSS')
+				event.endSpeed = last.speed
+				event.endZone = last.zone
 				events.push(event)
 			}
 			last = obj

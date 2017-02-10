@@ -28,7 +28,18 @@
 	height: 150px;
 }
 .block-heading{
-	margin-bottom: 12px;
+	margin-bottom: 18px;
+}
+.event-data-row{
+	margin-bottom: 10px;
+}
+.block-label{
+	display: inline-block;	
+	font-weight: 600;
+	margin-right: 8px;
+}
+.block-value{
+	display: inline-block;	
 }
 .btn-primary{
 	background-color: #002a5c;
