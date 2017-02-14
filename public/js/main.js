@@ -1,39 +1,56 @@
 window.preco = {}
 
 preco.initMap = function(){
-	 preco.map = new google.maps.Map(document.getElementById('map'), {
+
+	var markers = []
+
+	preco.map = new google.maps.Map(document.getElementById('map'), {
 		center: { lat: 36.0907578, lng: -119.5948303 },
 		zoom: 5
 	})
 			
 	preco.refreshMap = function(events){
-		var newCenter = new google.maps.LatLng(events[0].startLatitude, events[0].startLongitude);
-    preco.map.setOptions({
-        center: newCenter,
-        zoom: 7
-    });
+		removeMarkers()
 
-		events.forEach(function(e){
-			var marker = new google.maps.Marker({
-				position: new google.maps.LatLng(e.startLatitude, e.startLongitude),
-				map: preco.map,
-				title: e.startDate + "-" + e.startTime,
-				animation: google.maps.Animation.DROP
+		if(events.length > 0){
+			var newCenter = new google.maps.LatLng(events[0].startLatitude, events[0].startLongitude);
+			preco.map.setOptions({
+					center: newCenter,
+					zoom: 7
+			});
+
+			events.forEach(function(e){
+					markers.push(new google.maps.Marker({
+						position: new google.maps.LatLng(e.startLatitude, e.startLongitude),
+						map: preco.map,
+						title: e.startDate + "-" + e.startTime,
+						animation: google.maps.Animation.DROP
+					})
+				)
 			})
-		})
+		}
+	}
+
+	function removeMarkers(){
+    for(i=0; i<markers.length; i++){
+			markers[i].setMap(null);
+    }
 	}
 }
 
 $(document).ready(function() {
 		
 	var mdl = model()
-	
+	var allEvents
+
+
 	function initUI(){
 		fileSelect()
 		map()
 		mapNav()
 		//uploader()
-		mdl.getFileList()
+		filters()
+		mdl.fetchFileList()
 	}
 
 	function fileSelect(){
@@ -41,7 +58,7 @@ $(document).ready(function() {
 				
 		$('#file-select').change(function(e){
 			console.log("File selected: ", e.target.value)
-			mdl.getEvents(e.target.value)
+			mdl.fetchEvents(e.target.value)
 		})
 
 		function refresh(fileList){
@@ -66,8 +83,9 @@ $(document).ready(function() {
 		})
 
 		mdl.topics.eventsRetrieved.add(function(events){
+			$('#map-nav').empty()
+
 			events.forEach(function(e,i){
-				console.log("event: " , e)
 				var startDateTime = moment(e.startDateTime, 'YYYY/MM/DD hh:mm:ss.SSS')
 				var endDateTime = moment(e.endDateTime, 'YYYY/MM/DD hh:mm:ss.SSS')
 
@@ -94,32 +112,89 @@ $(document).ready(function() {
 			var csv = rdr.readAsText(file)
 		})
 	}
+	
+	function filters(){
+		
+		$('.ui-filter').change(function(e){
+			applyFilters()
+		})
+		
+		function applyFilters(){
+			var filteredEvents = mdl.allEvents
+
+			if($('#start-date').val()){
+				var sd = moment($('#start-date').val())
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.startDate.diff(sd) >= 0
+				})
+			}
+			if($('#end-date').val()){
+				var ed = moment($('#end-date').val())
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.endDate.diff(ed) <= 0
+				})
+			}
+			if(!$('#end-zone-1').prop('checked')){
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.endZone !== 1
+				})
+			}
+			if(!$('#end-zone-2').prop('checked')){
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.endZone !== 2
+				})
+			}
+			if(!$('#end-zone-3').prop('checked')){
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.endZone !== 3
+				})
+			}
+			if(!$('#end-zone-4').prop('checked')){
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.endZone !== 4
+				})
+			}	
+			if(!$('#end-zone-5').prop('checked')){
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.endZone !== 5
+				})
+			}
+			console.log(filteredEvents)
+			mdl.setFilteredEvents(filteredEvents)
+		}
+	}
 
 	initUI()
 })
 
 function model(){
 	var theModel = {}
-	var allEvents = []	
+		
+	theModel.allEvents = []
 
 	theModel.topics = {
 		fileListRetrieved: $.Callbacks(),
 		eventsRetrieved: $.Callbacks()
 	}
+	
 
-	theModel.getFileList = function(){
+	theModel.fetchFileList = function(){
 		$.getJSON('/preco/files', function(data){
-			console.log(data)
-			allEvents = data
 			theModel.topics.fileListRetrieved.fire(data)
 		})
 	}
 
-	theModel.getEvents = function(fileId){
+	theModel.fetchEvents = function(fileId){
 		$.getJSON('/preco/files/' + fileId + '/events', function(data){
+			theModel.allEvents = data
+			console.log(theModel.allEvents)
 			theModel.topics.eventsRetrieved.fire(data)
 		})
 	}
+
+	theModel.setFilteredEvents = function(filteredEvents){
+		theModel.topics.eventsRetrieved.fire(filteredEvents)		
+	} 
 
 	return theModel
 }

@@ -15,27 +15,27 @@ block content
 	.row
 		.form-group.col-sm-2
 			label Start Date:
-			input#start-date.form-control(type=text)
+			input#start-date.form-control.ui-filter(type=text)
 		.form-group.col-sm-2
 			label End Date:
-			input#end-date.form-control(type=text)
+			input#end-date.form-control.ui-filter(type=text)
 	.row
 		.form-group.col-sm-6
 			label Ending Zone: &nbsp &nbsp
 			label.checkbox-inline
-				input#end-zone-1(type="checkbox" checked)
+				input#end-zone-1.ui-filter(type="checkbox" checked)
 				| Zone 1
 			label.checkbox-inline
-				input#end-zone-2(type="checkbox" checked)
+				input#end-zone-2.ui-filter(type="checkbox" checked)
 				| Zone 2
 			label.checkbox-inline 
-				input#end-zone-3(type="checkbox" checked)
+				input#end-zone-3.ui-filter(type="checkbox" checked)
 				| Zone 3
 			label.checkbox-inline
-				input#end-zone-4(type="checkbox" checked)
+				input#end-zone-4.ui-filter(type="checkbox" checked)
 				| Zone 4
 			label.checkbox-inline
-				input#end-zone-5(type="checkbox" checked)
+				input#end-zone-5.ui-filter(type="checkbox" checked)
 				| Zone 5
 	.row
 		.col-sm-8
@@ -46,6 +46,7 @@ block content
 	script(src='/js/lib/jquery-2.2.4.min.js')
 	script(src='/js/lib/bootstrap.min.js')
 	script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js')
+	script(src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js')
 	script(src='/js/main.js')
 	script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDekNMUTvg9jt3omyVKcfDviQkgU1DmLL4&callback=preco.initMap')
 
