@@ -83,6 +83,13 @@ $(document).ready(function() {
 
 		$('#map-nav').delegate('.event-block', 'click', function(e){
 			$(this).toggleClass('block-expanded')
+			var index = $('#map-nav .event-block').index(this)
+			var newCenter = new google.maps.LatLng(preco.markers[index].position.lat(), preco.markers[index].position.lng());
+			preco.map.setOptions({
+					center: newCenter,
+					zoom: 12
+			});
+
 		})
 		
 		$('#map-nav').delegate('.event-block', 'mouseenter', function(e){
