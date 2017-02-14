@@ -2,7 +2,7 @@ window.preco = {}
 
 preco.initMap = function(){
 
-	var markers = []
+	preco.markers = []
 
 	preco.map = new google.maps.Map(document.getElementById('map'), {
 		center: { lat: 36.0907578, lng: -119.5948303 },
@@ -20,8 +20,11 @@ preco.initMap = function(){
 			});
 
 			events.forEach(function(e){
-					markers.push(new google.maps.Marker({
+					preco.markers.push(new google.maps.Marker({
 						position: new google.maps.LatLng(e.startLatitude, e.startLongitude),
+						icon:{
+							url: '/images/mastcrane-red.png'
+						},
 						map: preco.map,
 						title: e.startDate + "-" + e.startTime,
 						animation: google.maps.Animation.DROP
@@ -32,8 +35,8 @@ preco.initMap = function(){
 	}
 
 	function removeMarkers(){
-    for(i=0; i<markers.length; i++){
-			markers[i].setMap(null);
+    for(i=0; i<preco.markers.length; i++){
+			preco.markers[i].setMap(null);
     }
 	}
 }
@@ -81,6 +84,17 @@ $(document).ready(function() {
 		$('#map-nav').delegate('.event-block', 'click', function(e){
 			$(this).toggleClass('block-expanded')
 		})
+		
+		$('#map-nav').delegate('.event-block', 'mouseenter', function(e){
+			var index = $('#map-nav .event-block').index(this);
+			console.log("Index: ", index)
+			console.log("Marker at index:", preco.markers[index].position.lat())
+      preco.markers[index].setIcon({url: '/images/mastcrane-white.png'});
+		})
+		$('#map-nav').delegate('.event-block', 'mouseleave', function(e){
+			var index = $('#map-nav .event-block').index(this);
+      preco.markers[index].setIcon({url: '/images/mastcrane-red.png'});
+		})
 
 		mdl.topics.eventsRetrieved.add(function(events){
 			$('#map-nav').empty()
@@ -100,6 +114,8 @@ $(document).ready(function() {
 				$('#map-nav').append(block)
 			})
 		})
+
+		
 	}
 
 	function uploader(){
