@@ -125,13 +125,13 @@ $(document).ready(function() {
 			if($('#start-date').val()){
 				var sd = moment($('#start-date').val())
 				filteredEvents = filteredEvents.filter(function(e){
-					return e.startDate.diff(sd) >= 0
+					return moment(e.startDateTime, 'YYYY/MM/DD hh:mm:ss.SSS').diff(sd) >= 0
 				})
 			}
 			if($('#end-date').val()){
 				var ed = moment($('#end-date').val())
 				filteredEvents = filteredEvents.filter(function(e){
-					return e.endDate.diff(ed) <= 0
+					return moment(e.endDateTime, 'YYYY/MM/DD hh:mm:ss.SSS').diff(ed) <= 0
 				})
 			}
 			if(!$('#end-zone-1').prop('checked')){
