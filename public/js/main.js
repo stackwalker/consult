@@ -100,7 +100,8 @@ $(document).ready(function() {
 
 function model(){
 	var theModel = {}
-	
+	var allEvents = []	
+
 	theModel.topics = {
 		fileListRetrieved: $.Callbacks(),
 		eventsRetrieved: $.Callbacks()
@@ -108,6 +109,8 @@ function model(){
 
 	theModel.getFileList = function(){
 		$.getJSON('/preco/files', function(data){
+			console.log(data)
+			allEvents = data
 			theModel.topics.fileListRetrieved.fire(data)
 		})
 	}

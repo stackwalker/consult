@@ -1,7 +1,11 @@
 #map {
 	height: 500px;
 }
-
+.control-container{
+	margin: 16px 0;
+	border: solid 1px #efefef;
+	padding: 16px;
+}
 #map-nav{
 	border: solid 1px #002a5c;
 	height: 500px;
