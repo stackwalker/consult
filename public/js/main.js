@@ -8,7 +8,9 @@ preco.initMap = function(){
 		center: { lat: 36.0907578, lng: -119.5948303 },
 		zoom: 5
 	})
-			
+	
+	preco.infoWindow = new google.maps.InfoWindow()
+
 	preco.refreshMap = function(events){
 		removeMarkers()
 
@@ -19,17 +21,20 @@ preco.initMap = function(){
 					zoom: 7
 			});
 
-			events.forEach(function(e){
-					preco.markers.push(new google.maps.Marker({
+			events.forEach(function(e,i){
+					var marker = new google.maps.Marker({
 						position: new google.maps.LatLng(e.startLatitude, e.startLongitude),
 						icon:{
 							url: '/images/mastcrane-red.png'
 						},
 						map: preco.map,
 						title: e.startDate + "-" + e.startTime,
-						animation: google.maps.Animation.DROP
+						animation: google.maps.Animation.DROP,
+						index: i
 					})
-				)
+
+				preco.markers.push(marker)
+				google.maps.event.addListener(marker, 'click', function() {preco.model.selectEvent(preco.model.getFilteredEvents()[marker.index], marker.index)});
 			})
 		}
 	}
@@ -60,7 +65,6 @@ $(document).ready(function() {
 		mdl.topics.fileListRetrieved.add(refresh)
 				
 		$('#file-select').change(function(e){
-			console.log("File selected: ", e.target.value)
 			mdl.fetchEvents(e.target.value)
 		})
 
@@ -77,30 +81,38 @@ $(document).ready(function() {
 
 	function map() {
 		mdl.topics.eventsRetrieved.add(preco.refreshMap)
-	}
-	
-	function mapNav() {
 
-		$('#map-nav').delegate('.event-block', 'click', function(e){
-			$(this).toggleClass('block-expanded')
-			var index = $('#map-nav .event-block').index(this)
+		mdl.topics.eventSelected.add(function(event, index){
+			preco.infoWindow.setContent('Date: ' + event.startDateTime + '<br/>')	
+			preco.infoWindow.open(preco.map, preco.markers[index])
 			var newCenter = new google.maps.LatLng(preco.markers[index].position.lat(), preco.markers[index].position.lng());
 			preco.map.setOptions({
 					center: newCenter,
 					zoom: 12
 			});
+		})
+	}
+	
+	function mapNav() {
 
+		$('#map-nav').delegate('.event-block', 'click', function(e){
+			var index = $('#map-nav .event-block').index(this)
+			mdl.selectEvent(mdl.getFilteredEvents()[index], index)
 		})
 		
 		$('#map-nav').delegate('.event-block', 'mouseenter', function(e){
 			var index = $('#map-nav .event-block').index(this);
-			console.log("Index: ", index)
-			console.log("Marker at index:", preco.markers[index].position.lat())
       preco.markers[index].setIcon({url: '/images/mastcrane-white.png'});
 		})
+
 		$('#map-nav').delegate('.event-block', 'mouseleave', function(e){
 			var index = $('#map-nav .event-block').index(this);
       preco.markers[index].setIcon({url: '/images/mastcrane-red.png'});
+		})
+
+		mdl.topics.eventSelected.add(function(event, index){
+			$('.event-block').removeClass('block-expanded')
+			$($('.event-block')[index]).toggleClass('block-expanded')
 		})
 
 		mdl.topics.eventsRetrieved.add(function(events){
@@ -113,7 +125,7 @@ $(document).ready(function() {
 				var block = $('<div class="event-block"/>')
 				block.append('<div class="block-heading">' + startDateTime.format('MMMM Do YYYY, h:mm a') + '</div>')
 				block.append('<div class="event-data-row"/>')
-					.append('<div class="block-label">Min-Max Speed</div><div class="block-value">' + e.startSpeed + 'km/h - ' + e.endSpeed + 'km/h</div></div>')
+					.append('<div class="block-label">Start-End Speed</div><div class="block-value">' + e.startSpeed + 'km/h - ' + e.endSpeed + 'km/h</div></div>')
 				block.append('<div class="event-data-row"/>')
 					.append('<div class="block-label">Start/End Zone</div><div class="block-value">' + e.startZone + ' / ' + e.endZone + '</div></div>')
 				block.append('<div class="event-data-row"/>')
@@ -121,8 +133,6 @@ $(document).ready(function() {
 				$('#map-nav').append(block)
 			})
 		})
-
-		
 	}
 
 	function uploader(){
@@ -182,7 +192,6 @@ $(document).ready(function() {
 					return e.endZone !== 5
 				})
 			}
-			console.log(filteredEvents)
 			mdl.setFilteredEvents(filteredEvents)
 		}
 	}
@@ -192,14 +201,15 @@ $(document).ready(function() {
 
 function model(){
 	var theModel = {}
-		
+	var filteredEvents = []	
+	var selectedEvent = {}
 	theModel.allEvents = []
 
 	theModel.topics = {
 		fileListRetrieved: $.Callbacks(),
-		eventsRetrieved: $.Callbacks()
+		eventsRetrieved: $.Callbacks(),
+		eventSelected: $.Callbacks()
 	}
-	
 
 	theModel.fetchFileList = function(){
 		$.getJSON('/preco/files', function(data){
@@ -210,15 +220,25 @@ function model(){
 	theModel.fetchEvents = function(fileId){
 		$.getJSON('/preco/files/' + fileId + '/events', function(data){
 			theModel.allEvents = data
-			console.log(theModel.allEvents)
-			theModel.topics.eventsRetrieved.fire(data)
+			theModel.setFilteredEvents(data)
 		})
 	}
 
-	theModel.setFilteredEvents = function(filteredEvents){
+	theModel.setFilteredEvents = function(filtered){
+		filteredEvents = filtered
 		theModel.topics.eventsRetrieved.fire(filteredEvents)		
 	} 
 
+	theModel.getFilteredEvents = function(){
+		return filteredEvents
+	}
+
+	theModel.selectEvent = function(event,index){
+		selectedEvent = event
+		theModel.topics.eventSelected.fire(event, index)
+	}
+
+	preco.model = theModel
 	return theModel
 }
 
