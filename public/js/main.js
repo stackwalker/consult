@@ -83,7 +83,7 @@ $(document).ready(function() {
 		mdl.topics.eventsRetrieved.add(preco.refreshMap)
 
 		mdl.topics.eventSelected.add(function(event, index){
-			preco.infoWindow.setContent('<strong>Date:</strong> ' + event.startDateTime + '<br/><strong>Start/End Zone:</strong>' + event.startZone + '/' + event.endZone + '<br/><strong>Start/End Speed:</strong>' + event.startSpeed + '/' + event.endSpeed)	
+			preco.infoWindow.setContent('<strong>Date:</strong> ' + event.startDateTime + '<br/><strong>Start/End Zone:</strong>' + event.startZone + '/' + event.endZone + '<br/><strong>Start/End Speed:</strong>' + event.startSpeed + '/' + event.endSpeed + '<br/><strong>Id:</strong>' + event.sensorId + '<br/><strong>Type:</strong>' + event.type + '<br/><strong>Status:</strong>' + event.status)	
 			preco.infoWindow.open(preco.map, preco.markers[index])
 			var newCenter = new google.maps.LatLng(preco.markers[index].position.lat(), preco.markers[index].position.lng());
 			preco.map.setOptions({
