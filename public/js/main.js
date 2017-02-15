@@ -51,7 +51,6 @@ $(document).ready(function() {
 	var mdl = model()
 	var allEvents
 
-
 	function initUI(){
 		fileSelect()
 		map()
@@ -83,7 +82,7 @@ $(document).ready(function() {
 		mdl.topics.eventsRetrieved.add(preco.refreshMap)
 
 		mdl.topics.eventSelected.add(function(event, index){
-			preco.infoWindow.setContent('Date: ' + event.startDateTime + '<br/>')	
+			preco.infoWindow.setContent('<strong>Date:</strong> ' + event.startDateTime + '<br/><strong>Start/End Zone:</strong>' + event.startZone + '/' + event.endZone + '<br/><strong>Start/End Speed:</strong>' + event.startSpeed + '/' + event.endSpeed)	
 			preco.infoWindow.open(preco.map, preco.markers[index])
 			var newCenter = new google.maps.LatLng(preco.markers[index].position.lat(), preco.markers[index].position.lng());
 			preco.map.setOptions({
@@ -219,6 +218,7 @@ function model(){
 
 	theModel.fetchEvents = function(fileId){
 		$.getJSON('/preco/files/' + fileId + '/events', function(data){
+			console.log(data)
 			theModel.allEvents = data
 			theModel.setFilteredEvents(data)
 		})
