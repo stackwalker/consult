@@ -43,6 +43,7 @@ preco.initMap = function(){
     for(i=0; i<preco.markers.length; i++){
 			preco.markers[i].setMap(null);
     }
+		preco.markers = []
 	}
 }
 
@@ -112,6 +113,8 @@ $(document).ready(function() {
 		mdl.topics.eventSelected.add(function(event, index){
 			$('.event-block').removeClass('block-expanded')
 			$($('.event-block')[index]).toggleClass('block-expanded')
+			var position = $($('.event-block')[index]).position().top
+			$('#map-nav').scrollTop(position)
 		})
 
 		mdl.topics.eventsRetrieved.add(function(events){
@@ -189,6 +192,31 @@ $(document).ready(function() {
 			if(!$('#end-zone-5').prop('checked')){
 				filteredEvents = filteredEvents.filter(function(e){
 					return e.endZone !== 5
+				})
+			}
+			if(!$('#type-rear').prop('checked')){
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.type !== 'REAR'
+				})
+			}
+			if(!$('#type-left').prop('checked')){
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.type !== 'LEFT'
+				})
+			}
+			if(!$('#type-right').prop('checked')){
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.type !== 'RIGHT'
+				})
+			}
+			if(!$('#status-good').prop('checked')){
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.status !== 'GOOD'
+				})
+			}
+			if(!$('#status-bad').prop('checked')){
+				filteredEvents = filteredEvents.filter(function(e){
+					return e.status !== 'BAD'
 				})
 			}
 			mdl.setFilteredEvents(filteredEvents)

@@ -38,6 +38,27 @@ block content
 				input#end-zone-5.ui-filter(type="checkbox" checked)
 				| Zone 5
 	.row
+		.form-group.col-sm-3
+			label Type: &nbsp &nbsp
+			label.checkbox-inline
+				input#type-rear.ui-filter(type="checkbox" checked)
+				| Rear
+			label.checkbox-inline
+				input#type-left.ui-filter(type="checkbox" checked)
+				| Left
+			label.checkbox-inline
+				input#type-right.ui-filter(type="checkbox" checked)
+				| Right
+		.form-group.col-sm-3
+			label Status: &nbsp &nbsp
+			label.checkbox-inline
+				input#status-good.ui-filter(type="checkbox" checked)
+				| Good
+			label.checkbox-inline
+				input#status-bad.ui-filter(type="checkbox" checked)
+				| Bad
+
+	.row
 		.col-sm-8
 			#map
 		.col-sm-4

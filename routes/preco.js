@@ -38,6 +38,10 @@ router.post('/', upload.single('myFile'), (req, res, next) => {
 				event.startTime = obj.time
 				event.startSpeed = obj.speed
 				event.startZone = obj.zone
+				event.sensorId = obj.id
+				event.inReverse = obj.reverse === 1
+				event.type = obj.type
+				event.status = obj.status
 			}
 			if(obj.zone > 0 && last.zone > 0){
 				event.entries.push(obj)
